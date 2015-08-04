@@ -37,8 +37,8 @@ $example_stuff = "<bold>Anaheim: GRAND PLAZA</bold><br>
 
 
 // $ontvia_output = preg_replace ( '<bold>Anaheim: (.*?)<\/bold><br>', '', $ontvia_output);
-$ontvia_output = preg_replace ( '/<bold>Anaheim: (.*?)<\/bold><br>/', '', $ontvia_output);
-$search = array('<br>','ROUTE','<!-- EOR -->','<bold>','</bold>');
+$ontvia_output = preg_replace ( '/<bold>Anaheim: (.*?)<\/bold><br>\n/', '', $ontvia_output);
+$search = array('<br>','ROUTE','<!-- EOR -->','<bold>','</bold>','n/a');
 $ontvia_output = str_replace ( $search , '' , $ontvia_output );
 
 
@@ -56,6 +56,15 @@ foreach ($arrival_array as &$value) {
     
 }
 
-echo json_encode($arrival_array);
+$arrival_object = array();
+
+foreach ($arrival_array as &$value) {
+	if (count($value) == 3) {
+		$push_object = array('short_name' => $value[0], 'long_name' => $value[1], 'estimate' => $value[2]);
+		array_push($arrival_object, $push_object);
+	}
+}
+
+echo json_encode($arrival_object);
 
 ?>
