@@ -1,11 +1,11 @@
 <?php
 
-include('api_key.php.inc');
 
 $base_url = 'http://api.routeshout.com/v1/rs.stops.getTimes?key=';
-$agency = 'eldorado'
+$agency = 'eldorado';
 $stop_code = $_GET['stop_code'];
 
+include('api_key.php');
 
 // borrowed from http://phillippuleo.com/articles/lightweight-caching-proxy-php/
 
@@ -14,8 +14,10 @@ function fetchURL() {
 
 	global $base_url;
 	global $stop_code;
+	global $agency;
+	global $api_key;
 	
-    $url = $base_url.$api_key.'&agency='.$agency.'&stop='.$stop_code; // Be careful with posting variables.
+    $url = $base_url.$api_key.'&agency='.$agency.'&stop='.URLEncode($stop_code); // Be careful with posting variables.
 
 	$file = file_get_contents($url); // Fetch from the API.
 
@@ -54,13 +56,6 @@ $example_stuff = '{
 }';
 
 
-
-// $ontvia_output = preg_replace ( '<bold>Anaheim: (.*?)<\/bold><br>', '', $ontvia_output);
-$ontvia_output = preg_replace ( '/<bold>Anaheim: (.*?)<\/bold><br>\n/', '', $ontvia_output);
-$search = array('<br>','ROUTE','<!-- EOR -->','<bold>','</bold>','n/a');
-$ontvia_output = str_replace ( $search , '' , $ontvia_output );
-
-
 $response = $output->response;
 
 $arrival_object = array();
@@ -68,7 +63,7 @@ $arrival_object = array();
 foreach ($response as &$value) {
 	$arrival_estimate = strtotime(str_replace('-0400','-04:00',$value->arrival_time));
 	$departure_estimate = strtotime(str_replace('-0400','-04:00',$value->departure_time));
-	$scheduled_time = strtotime(str_replace('-0400','-04:00',$value->scheduled_time))
+	$scheduled_time = strtotime(str_replace('-0400','-04:00',$value->scheduled_time));
 	$push_object = array('route_short_name' => $value->route_short_name, 'route_short_name' => $value->route_long_name, 'type' => $value->type, 'arrival_estimate' => $arrival_estimate, 'departure_estimate' => $departure_estimate, 'scheduled_time' => $scheduled_time);
 	array_push($arrival_object, $push_object);
 }
