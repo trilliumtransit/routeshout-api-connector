@@ -60,11 +60,12 @@ $response = $output->response;
 
 $arrival_object = array();
 
+
 foreach ($response as &$value) {
-	$arrival_estimate = strtotime(str_replace('-0400','-04:00',$value->arrival_time));
-	$departure_estimate = strtotime(str_replace('-0400','-04:00',$value->departure_time));
-	$scheduled_time = strtotime(str_replace('-0400','-04:00',$value->scheduled_time));
-	$push_object = array('route_short_name' => $value->route_short_name, 'route_short_name' => $value->route_long_name, 'type' => $value->type, 'arrival_estimate' => $arrival_estimate, 'departure_estimate' => $departure_estimate, 'scheduled_time' => $scheduled_time);
+	$arrival_estimate = date('g:i A', strtotime(str_replace('-0400','-04:00',$value->arrival_time)));
+	$departure_estimate = date('g:i A', strtotime(str_replace('-0400','-04:00',$value->departure_time)));
+	$scheduled_time = date('g:i A', strtotime(str_replace('-0400','-04:00',$value->scheduled_time)));
+	$push_object = array('route_short_name' => $value->route_short_name, 'route_short_name' => $value->route_long_name, 'direction'=> $value->direction , 'type' => $value->type, 'arrival_estimate' => $arrival_estimate, 'departure_estimate' => $departure_estimate, 'scheduled_time' => $scheduled_time);
 	array_push($arrival_object, $push_object);
 }
 
